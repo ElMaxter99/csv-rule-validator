@@ -1,0 +1,33 @@
+{
+  "description": "Reglas básicas para validar un CSV de altas de clientes",
+  "columns": {
+    "dni": {
+      "rules": [
+        { "type": "required", "message": "El DNI es obligatorio" },
+        { "type": "string", "length": 8, "message": "El DNI debe tener 8 caracteres" },
+        { "type": "number", "integer": true, "message": "El DNI debe ser numérico" }
+      ]
+    },
+    "nombre": {
+      "rules": [
+        { "type": "required" },
+        { "type": "string", "minLength": 3, "maxLength": 120 }
+      ]
+    },
+    "email": {
+      "rules": [
+        { "type": "required" },
+        {
+          "type": "string",
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "message": "El email no tiene un formato válido"
+        }
+      ]
+    },
+    "telefono": {
+      "rules": [
+        { "type": "string", "onlyIf": { "present": true, "field": "telefono" }, "minLength": 9, "maxLength": 12 }
+      ]
+    }
+  }
+}

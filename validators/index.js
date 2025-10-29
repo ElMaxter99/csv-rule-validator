@@ -3,6 +3,8 @@ import number from './number.js';
 import inRule from './in.js';
 import requiredIf from './requiredIf.js';
 import custom from './custom.js';
+import stringValidator from './string.js';
+import compare from './compare.js';
 
 export default {
   required,
@@ -10,4 +12,6 @@ export default {
   in: inRule,
   requiredIf,
   custom,
+  string: stringValidator,
+  compare,
 };
