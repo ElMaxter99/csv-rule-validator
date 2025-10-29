@@ -144,4 +144,6 @@ El empaquetado y la publicación ahora se realizan a través de un flujo de GitH
 2. Subí el commit y el tag (`git push origin main --follow-tags`).
 3. El workflow [`publish.yml`](.github/workflows/publish.yml) se activará al detectar el tag (`v*`), ejecutará los tests y publicará el paquete con `npm publish` usando el secreto `NPM_TOKEN`.
 
+> **Nota:** el workflow instala dependencias con `npm ci` cuando existe `package-lock.json` y utiliza `npm install` como respaldo, por lo que no es obligatorio versionar el lockfile.
+
 Asegurate de configurar el secreto `NPM_TOKEN` en el repositorio con un token de acceso a npm que tenga permisos de publicación.
