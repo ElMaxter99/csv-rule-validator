@@ -1,6 +1,10 @@
-export default function inRule(value, row, rule) {
-  if (value === undefined || value === '') return true;
-  return rule.values.includes(value)
+import { resolveTokens } from '../utils/tokenResolver.js';
+
+export default function inRule(value, row, rule, context) {
+  if (value === undefined || value === null || value === '') return true;
+  const evaluationContext = { value, row, context, rule };
+  const allowedValues = resolveTokens(rule.values ?? [], evaluationContext);
+  return allowedValues.includes(value)
     ? true
-    : `Debe ser uno de: ${rule.values.join(', ')}`;
+    : rule.message || `Debe ser uno de: ${allowedValues.join(', ')}`;
 }

@@ -4,6 +4,9 @@
   "description": "Librería para validar datasets tipo CSV o JSON con reglas declarativas",
   "type": "module",
   "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "papaparse": "^5.5.3"
   }

@@ -1,0 +1,53 @@
+{
+  "description": "Valida dependencias entre columnas para beneficios corporativos",
+  "columns": {
+    "tipo_empleado": {
+      "rules": [
+        { "type": "required" },
+        { "type": "in", "values": ["planta", "contratista", "practicante"] }
+      ]
+    },
+    "fecha_ingreso": {
+      "rules": [
+        { "type": "requiredIf", "when": { "field": "tipo_empleado", "equals": "planta" } },
+        { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "message": "Usa formato YYYY-MM-DD" }
+      ]
+    },
+    "salario": {
+      "rules": [
+        { "type": "number", "min": 0 },
+        {
+          "type": "custom",
+          "resolver": "validateMinimumSalary",
+          "args": ["$value", "$row.tipo_empleado"],
+          "message": "El salario no cumple el mínimo requerido para el tipo de empleado"
+        }
+      ]
+    },
+    "bono": {
+      "rules": [
+        {
+          "type": "compare",
+          "operator": "lte",
+          "left": "$value",
+          "right": "$row.salario",
+          "message": "El bono no puede ser mayor que el salario"
+        }
+      ]
+    }
+  },
+  "rowValidations": [
+    {
+      "when": { "field": "tipo_empleado", "equals": "planta" },
+      "assertions": [
+        {
+          "column": "beneficios_medicos",
+          "rule": {
+            "type": "required",
+            "message": "Los empleados de planta requieren información de beneficios médicos"
+          }
+        }
+      ]
+    }
+  ]
+}

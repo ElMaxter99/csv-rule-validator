@@ -1,0 +1,105 @@
+{
+  "description": "Escenario complejo para scoring de riesgo y calidad de datos",
+  "columns": {
+    "operacion_id": {
+      "rules": [
+        { "type": "required" },
+        { "type": "string", "pattern": "^OP-\\d{6}$", "message": "El ID debe seguir el patrón OP-######" }
+      ]
+    },
+    "estado": {
+      "rules": [
+        { "type": "required" },
+        { "type": "in", "values": ["aprobada", "rechazada", "pendiente"] }
+      ]
+    },
+    "motivo_rechazo": {
+      "rules": [
+        {
+          "type": "requiredIf",
+          "when": {
+            "field": "estado",
+            "equals": "rechazada"
+          },
+          "message": "Los rechazos requieren motivo"
+        }
+      ]
+    },
+    "score": {
+      "rules": [
+        { "type": "number", "min": 0, "max": 100 },
+        {
+          "type": "compare",
+          "operator": "gte",
+          "left": "$value",
+          "right": "$row.score_minimo_perfil",
+          "onlyIf": { "field": "score_minimo_perfil", "present": true },
+          "message": "El score está por debajo del mínimo permitido para el perfil"
+        }
+      ]
+    },
+    "score_minimo_perfil": {
+      "rules": [
+        { "type": "number", "min": 0, "max": 100 }
+      ]
+    },
+    "flag_sospechoso": {
+      "rules": [
+        { "type": "string", "pattern": "^(SI|NO)$", "message": "Usa SI o NO" }
+      ]
+    },
+    "comentarios": {
+      "rules": [
+        {
+          "type": "string",
+          "onlyIf": {
+            "any": [
+              { "field": "flag_sospechoso", "equals": "SI" },
+              { "field": "estado", "equals": "rechazada" }
+            ]
+          },
+          "minLength": 10,
+          "message": "Incluí una explicación cuando la operación es riesgosa"
+        }
+      ]
+    }
+  },
+  "rowValidations": [
+    {
+      "when": { "field": "estado", "equals": "aprobada" },
+      "assertions": [
+        {
+          "column": "monto_desembolsado",
+          "rule": { "type": "required", "message": "Las operaciones aprobadas deben tener desembolso" }
+        },
+        {
+          "column": "fecha_aprobacion",
+          "rule": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "message": "El formato de fecha de aprobación es inválido"
+          }
+        }
+      ]
+    },
+    {
+      "when": {
+        "all": [
+          { "field": "estado", "equals": "aprobada" },
+          { "field": "flag_sospechoso", "equals": "SI" }
+        ]
+      },
+      "assertions": [
+        {
+          "column": "reporte_manual",
+          "rule": {
+            "type": "custom",
+            "resolver": "validarReporteManual",
+            "args": ["$row"],
+            "message": "Falta adjuntar el reporte manual para operaciones sospechosas aprobadas"
+          }
+        }
+      ]
+    }
+  ]
+}
