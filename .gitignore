@@ -1,0 +1,44 @@
+# Node dependencies
+/node_modules
+
+# Pklock
+package-lock.json
+
+# Build outputs
+/dist
+/build
+/lib
+/out
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Test / coverage
+/coverage
+/.nyc_output
+
+# Env files
+.env
+.env.*.local
+.env.local
+.env.test
+
+# Editor + OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Caches / temp
+.cache
+.parcel-cache
+.next
+.svelte-kit
+.temp
+
+# TypeScript
+*.tsbuildinfo
