@@ -1,0 +1,40 @@
+{
+  "description": "Usa resolvers externos para validar datos con la lógica del dominio",
+  "columns": {
+    "dni": {
+      "rules": [
+        { "type": "required" },
+        { "type": "string", "length": 8 },
+        {
+          "type": "custom",
+          "resolver": "dniExisteEnCore",
+          "args": ["$value"],
+          "message": "El DNI indicado no existe en los sistemas core"
+        }
+      ]
+    },
+    "cuenta": {
+      "rules": [
+        { "type": "required" },
+        {
+          "type": "custom",
+          "resolver": "cuentaHabilitadaParaAlta",
+          "args": ["$value", "$row.dni"],
+          "message": "La cuenta no admite nuevas altas para el DNI informado"
+        }
+      ]
+    },
+    "monto": {
+      "rules": [
+        { "type": "required" },
+        { "type": "number", "min": 0 },
+        {
+          "type": "custom",
+          "resolver": "montoDentroDeLimites",
+          "args": ["$value", "$row.cuenta"],
+          "message": "El monto excede los límites para la cuenta seleccionada"
+        }
+      ]
+    }
+  }
+}

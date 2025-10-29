@@ -1,0 +1,43 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit:
+    name: ${{ matrix.test.name }} (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.x, 20.x]
+        test:
+          - name: "Parse CSV"
+            file: tests/parseCSV.test.js
+          - name: "Token Resolver"
+            file: tests/utils/tokenResolver.test.js
+          - name: "Condition Evaluation"
+            file: tests/utils/evaluateCondition.test.js
+          - name: "Validators"
+            file: tests/validators.test.js
+          - name: "Dataset Validation"
+            file: tests/validateDataset.test.js
+          - name: "Configuration Scenarios"
+            file: tests/configs.test.js
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run targeted test file
+        run: node --test ${{ matrix.test.file }}
